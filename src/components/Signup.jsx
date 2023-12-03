@@ -19,7 +19,7 @@ function Signup() {
       .then((response) => {
         storeToken(response.data.authToken);
         authenticateUser();
-        navigate("/");
+        navigate("/my-cohorts");
       })
       .catch((error) => {
         const errorDescription = error.response.data.message;
