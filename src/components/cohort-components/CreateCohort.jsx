@@ -1,20 +1,14 @@
 import { useState } from "react";
 import cohortService from "../../services/cohort.services";
 
-const CreateCohort = () => {
+const CreateCohort = ({ getCohorts }) => {
   const [cohort, setCohort] = useState({
     teacherName: "",
     cohortName: "",
     studentsNames: "",
-    projectSetting: null
+    projectSetting: null,
   });
-
-  // const cleanStudentsInput = () => {
-  //   const studentsNames = cohort.studentsInput.replace(/\r?\n|\r|\n/g || "", "#").split("#")
-  //     .filter((el) => el.trim().length)
-  //     .map((el) => el.trim().toLowerCase());
-  //     return studentsNames
-  // };
+  const [errorMessage, setErrorMessage] = useState(undefined);
 
   const handleChange = (e) => {
     const name = e.target.name;
@@ -22,20 +16,31 @@ const CreateCohort = () => {
     setCohort((values) => ({ ...values, [name]: value }));
   };
 
+  const createCohort = (e) => {
+    e.preventDefault();
+    cohortService
+      .createCohort(cohort)
+      .then((response) => {
+        console.log("New Cohort! ", response.data);
+        getCohorts();
+        setCohort({
+          teacherName: "",
+          cohortName: "",
+          studentsNames: "",
+          projectSetting: null,
+        });
+      })
+      .catch((error) => {
+        setErrorMessage(error.response.data.message);
+      });
+  };
+
   const openProjectForm = (e) => {
     e.preventDefault();
   };
 
-  const handelFormSubmit = (e) => {
-    e.preventDefault();
-    cohortService.createCohort(cohort)
-    .then((response) => {
-     console.log('New Cohort! ', response.data)
-    })
-  };
-
   return (
-    <form onSubmit={handelFormSubmit}>
+    <form onSubmit={createCohort}>
       <div className="mb-3">
         <label className="form-label">Teacher Name:</label>
         <input
@@ -74,13 +79,16 @@ const CreateCohort = () => {
       </div>
       <div className="mb-3">
         <label>
-          Next Project preferences settings:  
+          Next Project preferences settings:
           {/* // projectSettings {} for req.body --> {projectType, preferencesNumber, blockedNumber} */}
           <button className="btn btn-light" onClick={openProjectForm}>
             Open Project form
           </button>
         </label>
       </div>
+
+      { errorMessage && <p className="error-message text-uppercase">- {errorMessage} -</p> }
+      
       <button type="submit" className="btn btn-dark">
         Submit
       </button>
@@ -90,7 +98,7 @@ const CreateCohort = () => {
 
 export default CreateCohort;
 
-{
+// {
   /* <select> Course
                     <option value="WD">Web Dev</option>
                     <option value="UX">UX Design</option>
@@ -115,4 +123,4 @@ export default CreateCohort;
                     <option value="25">2025</option>
                     <option value=""></option>
                 </select> */
-}
+// }
