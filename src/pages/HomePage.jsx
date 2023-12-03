@@ -2,17 +2,19 @@ import { useContext, useState } from "react";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
 import { AuthContext } from "../context/auth.context";
-import CohortList from "../components/cohort-components/CohortList";
-import CreateCohort from "../components/cohort-components/CreateCohort";
+import StudentLogin from "../components/student-components/StudentLogin";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [toggle, setToggle] = useState(false);
 
   const { isLoggedIn } = useContext(AuthContext);
+  
   return (
     <div>
       {!isLoggedIn && (
-        <>
+        <div className="row">
+        <div className="col">
           {!toggle && (
             <div>
               <button onClick={() => setToggle(!toggle)}>Go to sign up</button>
@@ -30,17 +32,14 @@ const HomePage = () => {
               <Signup />
             </div>
           )}
-        </>
-      )}
-      {isLoggedIn && (
-        <div className="row">
-          <div className="col">
-            <CohortList />
           </div>
           <div className="col">
-            <CreateCohort />
+          <Link to={'/student-area'}><button className="btn btn-warning">Student Preferences</button></Link>
           </div>
         </div>
+      )}
+      {isLoggedIn && (
+        <p>you're log in</p>
       )}
     </div>
   );
