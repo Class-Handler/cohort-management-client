@@ -1,17 +1,19 @@
 import { NavLink } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/auth.context";
+import { StudentContext } from "../context/student.context";
 
 
 function Navbar() {
   const { isLoggedIn, logOutUser } = useContext(AuthContext);
-
+  const { student, isValidate, logOutStudent } = useContext(StudentContext);
+console.log('navbar  ', student)
   return (
     <nav className="nav mb-5 justify-content-between">
-      {isLoggedIn && (
+      {(isLoggedIn && !isValidate) && (
         <>
           <div>
-            <NavLink to="/">
+            <NavLink to="/my-cohorts">
               <button className="btn btn-dark">Manage Your Cohorts</button>
             </NavLink>
           </div>
@@ -26,15 +28,34 @@ function Navbar() {
         </>
       )}
 
-      {!isLoggedIn && (
+      {(!isLoggedIn && !isValidate)&& (
         <>
         <div>
-        <NavLink to="/">
-          <button id="home" className="navButton">
-            Home
+        <NavLink to="/student-area">
+          <button className="btn btn-warning">
+            Student area
           </button>
         </NavLink>
       </div>
+        </>
+      )}
+
+      {(isValidate) && (
+        <>
+        <div>
+
+          <button className="btn btn-warning">
+            <span className="text-uppercase">{student?.studentName}</span>'s preferences
+          </button>
+
+      </div>
+      <div>
+            <NavLink to="/student-area">
+              <button className="btn btn-dark align-end" onClick={logOutStudent}>
+                Leave Preferences
+              </button>
+            </NavLink>
+          </div>
         </>
       )}
     </nav>
