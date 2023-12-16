@@ -6,8 +6,8 @@ import { StudentContext } from "../context/student.context";
 
 function Navbar() {
   const { isLoggedIn, logOutUser } = useContext(AuthContext);
-  const { student, isValidate, logOutStudent } = useContext(StudentContext);
-console.log('navbar  ', student)
+  const { studentData, isValidate, logOutStudent } = useContext(StudentContext);
+console.log('navbar  ', studentData)
   return (
     <nav className="nav mb-5 justify-content-between">
       {(isLoggedIn && !isValidate) && (
@@ -45,7 +45,7 @@ console.log('navbar  ', student)
         <div>
 
           <button className="btn btn-warning">
-            <span className="text-uppercase">{student?.studentName}</span>'s preferences
+            <span className="text-uppercase">{studentData.validateStudent.studentName}</span>'s preferences
           </button>
 
       </div>
