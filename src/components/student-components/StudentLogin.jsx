@@ -1,5 +1,4 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { StudentContext } from "../../context/student.context";
 import studentService from "../../services/student.services";
 
@@ -8,10 +7,7 @@ const StudentLogin = () => {
   const [loginCode, setLoginCode] = useState(null);
   const [errorMessage, setErrorMessage] = useState(undefined);
 
-  const navigate = useNavigate();
-
-  const { storeValidationCode, authenticateStudent } =
-    useContext(StudentContext);
+  const { storeStudentToken, authenticateStudent } = useContext(StudentContext);
 
   const handleForm = async (e) => {
     e.preventDefault();
@@ -19,9 +15,9 @@ const StudentLogin = () => {
     studentService
       .validateStudent(loginCode, studentName)
       .then((response) => {
-        console.log(response.data);
-        // storeValidationCode(response.data.project.oneTimeId.uuId);
-        // authenticateStudent(response.data);
+        console.log('VERIFY',response.data);
+        storeStudentToken(response.data);
+        authenticateStudent()
       })
       .catch((err) => {
         console.log(err);
@@ -43,7 +39,7 @@ const StudentLogin = () => {
             type="text"
             required
             onChange={(e) => {
-              setStudentName(e.target.value);
+            setStudentName(e.target.value);
             }}
           />
         </label>
@@ -53,7 +49,7 @@ const StudentLogin = () => {
             type="text"
             required
             onChange={(e) => {
-              setLoginCode(e.target.value);
+            setLoginCode(e.target.value);
             }}
           />
         </label>
