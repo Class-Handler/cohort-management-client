@@ -8,10 +8,10 @@ class StudentService {
  
     this.api.interceptors.request.use(config => {
 
-      const storedToken = localStorage.getItem('authToken');
+      const storedStudentToken = localStorage.getItem('studentToken');
  
-      if (storedToken) {
-        config.headers = { Authorization: `Bearer ${storedToken}` };
+      if (storedStudentToken) {
+        config.headers = { Authorization: `Bearer ${storedStudentToken}` };
       }
  
       return config;
@@ -19,7 +19,11 @@ class StudentService {
   }
 
   validateStudent = (code, studentName) => {
-    return this.api.get(`/api/students?code=${code}&studentName=${studentName}`)
+    return this.api.get(`/api/students/validation?code=${code}&studentName=${studentName}`)
+  }
+
+  verifyStudent = () => {
+    return this.api.get('/api/students/verifyStudent')
   }
 
 }
