@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import studentService from "../services/student.services";
 const StudentContext = React.createContext();
 
-
 function StudentProviderWrapper(props) {
   const [isValidate, setIsValidate] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -15,21 +14,22 @@ function StudentProviderWrapper(props) {
   const authenticateStudent = async () => {
     const storedStudentToken = localStorage.getItem("studentToken");
 
-    if (storedStudentToken){
-      try{
-        const verifyed = await studentService.verifyStudent()
-        setStudentData(verifyed.data)
-        setIsValidate(true)
-        setIsLoading(false)
-      } catch(err){
-        setIsValidate(false)
-        setIsLoading(false)
-        setStudentData(null)
+    if (storedStudentToken) {
+      try {
+        const verifyed = await studentService.verifyStudent();
+        setStudentData(verifyed.data);
+        setIsValidate(true);
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+        setIsValidate(false);
+        setIsLoading(false);
+        setStudentData(null);
       }
     } else {
-      setIsValidate(false)
-        setIsLoading(false)
-        setStudentData(null)
+      setIsValidate(false);
+      setIsLoading(false);
+      setStudentData(null);
     }
   };
 

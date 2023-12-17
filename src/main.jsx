@@ -10,8 +10,8 @@ import "./index.css";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Router>
     <AuthProviderWrapper>
-      <StudentProviderWrapper>
-        <App />
+      <StudentProviderWrapper>        
+          <App />
       </StudentProviderWrapper>
     </AuthProviderWrapper>
   </Router>

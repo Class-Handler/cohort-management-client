@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
 import { AuthContext } from "../context/auth.context";
-import StudentLogin from "../components/student-components/StudentLogin";
+import StudentLogin from "./StudentLogin";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
@@ -34,7 +34,7 @@ const HomePage = () => {
           )}
           </div>
           <div className="col">
-          <Link to={'/student-area'}><button className="btn btn-warning">Student Preferences</button></Link>
+          <Link to={'/students-area'}><button className="btn btn-warning">Student Preferences</button></Link>
           </div>
         </div>
       )}

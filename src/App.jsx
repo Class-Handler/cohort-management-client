@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import CohortsPage from './pages/CohortsPage';
 import CohortPage from './pages/CohortPage';
 import StudentPage from './pages/StudentPage';
+import StudentLogin from './pages/StudentLogin';
 
 
 function App() {
@@ -14,7 +15,8 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path='/student-area' element={<StudentPage />} />
+          <Route path='/students-area' element={<StudentLogin />} />
+          <Route path='/student-page' element={<StudentPage />} />
           <Route path="/my-cohorts" element={<CohortsPage />} />
           <Route path="/:cohortId" element={<CohortPage />} />
           <Route path="*" element={<Navigate to="/" />} />

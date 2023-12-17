@@ -1,6 +1,8 @@
 import { useContext, useState } from "react";
-import { StudentContext } from "../../context/student.context";
-import studentService from "../../services/student.services";
+import { StudentContext } from "../context/student.context";
+import studentService from "../services/student.services";
+import { useNavigate } from "react-router-dom";
+
 
 const StudentLogin = () => {
   const [studentName, setStudentName] = useState(null);
@@ -8,6 +10,8 @@ const StudentLogin = () => {
   const [errorMessage, setErrorMessage] = useState(undefined);
 
   const { storeStudentToken, authenticateStudent } = useContext(StudentContext);
+
+  const navigate = useNavigate()
 
   const handleForm = async (e) => {
     e.preventDefault();
@@ -18,6 +22,7 @@ const StudentLogin = () => {
         console.log('VERIFY',response.data);
         storeStudentToken(response.data);
         authenticateStudent()
+        navigate("/student-page")
       })
       .catch((err) => {
         console.log(err);
