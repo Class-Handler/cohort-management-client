@@ -28,13 +28,13 @@ function Signup() {
   };
 
   return (
-    <div>
+    <>
       <form onSubmit={handleSignupSubmit} className="form">
         <div className="form-outline mb-2">
           <label className="form-label">
             Email
             <input
-              className="form-control"
+              className="form-control mt-2"
               type="email"
               name="email"
               value={email}
@@ -66,7 +66,7 @@ function Signup() {
       {errorMessage && (
         <p className="error-message text-uppercase">- {errorMessage} -</p>
       )}
-    </div>
+    </>
   );
 }
 

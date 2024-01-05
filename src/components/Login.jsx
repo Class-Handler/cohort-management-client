@@ -44,7 +44,7 @@ function Login() {
               </label>
             </div>
 
-            <div className="form-outline mb-4">
+            <div className="form-outline mb-2">
               <label className="form-label">
                 Password
                 <input
