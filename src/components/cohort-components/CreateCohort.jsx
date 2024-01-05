@@ -40,7 +40,7 @@ const CreateCohort = ({ getCohorts }) => {
   };
 
   return (
-    <form onSubmit={createCohort}>
+    <form onSubmit={createCohort} className="card p-4">
       <div className="mb-3">
         <label className="form-label">Teacher Name:</label>
         <input
@@ -51,7 +51,8 @@ const CreateCohort = ({ getCohorts }) => {
           className="form-control"
           required
         />
-
+      </div>
+      <div className="mb-3">
         <label className="form-label">Cohort Name:</label>
         <input
           type="text"
@@ -87,8 +88,10 @@ const CreateCohort = ({ getCohorts }) => {
         </label>
       </div>
 
-      { errorMessage && <p className="error-message text-uppercase">- {errorMessage} -</p> }
-      
+      {errorMessage && (
+        <p className="error-message text-uppercase">- {errorMessage} -</p>
+      )}
+
       <button type="submit" className="btn btn-dark">
         Submit
       </button>
@@ -99,7 +102,7 @@ const CreateCohort = ({ getCohorts }) => {
 export default CreateCohort;
 
 // {
-  /* <select> Course
+/* <select> Course
                     <option value="WD">Web Dev</option>
                     <option value="UX">UX Design</option>
                     <option value="DA">Data Analist</option>
