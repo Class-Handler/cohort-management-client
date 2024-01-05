@@ -2,44 +2,69 @@ import { useContext, useState } from "react";
 import Login from "../components/Login";
 import Signup from "../components/Signup";
 import { AuthContext } from "../context/auth.context";
-import StudentLogin from "./StudentLogin";
+import { StudentContext } from "../context/student.context";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [toggle, setToggle] = useState(false);
 
   const { isLoggedIn } = useContext(AuthContext);
-  
+  const { isValidate, studentData } = useContext(StudentContext);
+
   return (
-    <div>
-      {!isLoggedIn && (
-        <div className="row">
-        <div className="col">
-          {!toggle && (
-            <div>
-              <button onClick={() => setToggle(!toggle)}>Go to sign up</button>
-              <Login />
-            </div>
-          )}
-          {toggle && (
-            <div>
-              <button
-                className="btn btn-primary"
-                onClick={() => setToggle(!toggle)}
-              >
-                Go to log in
-              </button>
-              <Signup />
-            </div>
-          )}
-          </div>
+    <div className="row">
+      {!isLoggedIn && !isValidate && (
+        <>
           <div className="col">
-          <Link to={'/students-area'}><button className="btn btn-warning">Student Preferences</button></Link>
+            {!toggle && (
+              <div>
+                <Login />
+                <div className="mt-4">
+                  <span>Don't have an account yet? </span>
+                  <button
+                    className="btn btn-dark"
+                    onClick={() => setToggle(!toggle)}
+                  >
+                    Go to sign up
+                  </button>
+                </div>
+              </div>
+            )}
+            {toggle && (
+              <div>
+                <Signup />
+                <div className="mt-4">
+                  <span className="mt-4">Do you already have an account? </span>
+                  <button
+                    className="btn btn-dark"
+                    onClick={() => setToggle(!toggle)}
+                  >
+                    Go to log in
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
+
+          <div className="col">
+            <p>This application will allow you to manage your cohorts</p>
+          </div>
+        </>
+      )}
+
+      {isValidate && (
+        <div className="col">
+        <p>Hey <span className="text-capitalize">{studentData.studentName}</span>, sounds you landed on the wrong page!</p>
+          <Link to={"/students-area"}>
+            <button className="btn btn-warning">Back to my project's preferences</button>
+          </Link>
         </div>
       )}
+
       {isLoggedIn && (
-        <p>you're log in</p>
+        <div className="col">
+          <p>You're logged in!</p>
+        </div>
       )}
     </div>
   );
