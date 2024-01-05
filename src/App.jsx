@@ -11,7 +11,7 @@ import StudentLogin from './pages/StudentLogin';
 function App() {
 
   return (
-    <div className="App container">
+    <div className="App m-3">
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
