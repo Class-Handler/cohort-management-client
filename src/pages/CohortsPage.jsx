@@ -26,7 +26,7 @@ const CohortsPage = () => {
     }, []);
 
     if(isLoading){
-        <p>Loading...</p>
+      return  <p>Loading...</p>
     }
 
   return (
