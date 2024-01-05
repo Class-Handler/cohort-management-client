@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 
 const CohortCard = ({ cohortObj }) => {
   return (
-    <div className="CohortCard card mb-3" width="18rem" >
-      <div className="card-body">
+    <div className="CohortCard card mb-3" >
+      <div className="card-body text-center">
         <Link to={`/${cohortObj._id}`} className="card-title text-capitalize">
           <h3>{cohortObj.cohortName}</h3>
         </Link>
