@@ -5,6 +5,7 @@ import { AuthProviderWrapper } from "./context/auth.context";
 import { StudentProviderWrapper } from "./context/student.context";
 import App from "./App.jsx";
 import "bootstrap/dist/css/bootstrap.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
