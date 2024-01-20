@@ -26,8 +26,20 @@ class CohortService {
     return this.api.get(`/api/cohorts/${cohortId}`)
   }
 
+  getStudent = (cohortId, studentId) => {
+    return this.api.get(`/api/cohorts/${cohortId}/${studentId}`)
+  }
+
+  updateStudentsPairs = (cohortId, arrayStudentsObj) => {
+    return this.api.put(`/api/cohorts/${cohortId}/students`, arrayStudentsObj)
+  }
+
   createCohort = (newCohort) => {
     return this.api.post('/api/cohorts', newCohort)
+  }
+
+  deleteCohort = (cohortId) => {
+    return this.api.delete(`/api/cohorts/${cohortId}`)
   }
 }
 

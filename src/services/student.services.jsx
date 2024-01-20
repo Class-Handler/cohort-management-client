@@ -26,6 +26,10 @@ class StudentService {
     return this.api.get('/api/students/verifyStudent')
   }
 
+  submitPreferences = (studentId, body) => {
+    return this.api.put(`/api/students/${studentId}`, body)
+  }
+
 }
 
 const studentService = new StudentService();
