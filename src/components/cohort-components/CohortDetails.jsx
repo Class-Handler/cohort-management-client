@@ -1,107 +1,107 @@
 import { useState } from "react";
-import projectService from "../../services/project.services";
+import { Link } from "react-router-dom";
 
-
-const CohortDetails = ({ cohort }) => {
-  const [project, setProject] = useState(null);
-  const [expDate, setExpDate] = useState("");
-  const [errorMessage, setErrorMessage] = useState(undefined);
-
-  const getProject = (projectId) => {
-    projectService
-      .getProject(cohort._id, projectId)
-      .then((response) => {
-        setProject(response.data);
-      })
-      .catch((err) => {
-        setErrorMessage(err.message);
-      });
-  };
-
-  const openPreferences = async (e) => {
-    e.preventDefault();
-
-    try {
-      const code = await projectService.getOneTimeCode(expDate);
-      console.log("CODE", code.data);
-      const body = {
-        preferencesOpen: true,
-        oneTimeId: code.data,
-      };
-      updateProject(body);
-    } catch (err) {
-      console.log(err);
-      setErrorMessage(err.data.message);
-    }
-  };
-
-  const updateProject = async (body) => {
-    try {
-      const updatedProject = await projectService.updateProject(
-        cohort._id,
-        project._id,
-        body
-      );
-      setProject(updatedProject.data);
-    } catch (err) {
-      console.log(err);
-      setErrorMessage(err.data.message);
-    }
-  };
+const CohortDetails = ({ cohort, getProject, setProject, deleteCohort, getStudent, setStudent }) => {
+  const [toggle, setToggle] = useState(false);
 
   return (
     <>
-      <h4>{cohort.cohortName}</h4>
-
-      {cohort.projects.sort().map((project) => {
-        return (
-          <div key={project._id}>
-            <button
-              className="btn btn-light"
-              onClick={() => {
-                getProject(project._id);
-              }}
-            >
-              {project.projectType}
+      <p>Techer: {cohort.teacherName}</p>
+      <p>Access to: {cohort.userId.email}</p>
+      {!toggle ? (
+        <section className="mb-2">
+          <button
+            className="btn btn-primary btn-sm me-2"
+            onClick={() => setToggle(!toggle)}
+          >
+            Close projects list
+          </button>
+          <button
+            className="btn btn-outline-info btn-sm me-2"
+            onClick={() => setToggle(!toggle)}
+          >
+            See all {cohort.students.length} students
+          </button>
+          <Link to={`/lab-pairs/${cohort._id}`} style={{ textDecoration: "none" }}>
+            <button className="btn btn-outline-success btn-sm me-2">
+              Manage Pairs
             </button>
+          </Link>
+          <button className="btn btn-outline-dark btn-sm me-2" onClick={() => {setProject(null); setStudent(null)}}>New Project</button>
+          <button
+            className="btn btn-outline-danger btn-sm me-2"
+            onClick={deleteCohort}
+          >
+            Delete Cohort
+          </button>
+          <div className="card p-3">
+            {!cohort.projects.length ? (
+              <p>No Projects Yet</p>
+            ) : (
+              cohort.projects.map((project) => {
+                return (
+                  <button
+                    key={project._id}
+                    className={
+                      project.oneTimeId
+                        ? "btn btn-primary m-2"
+                        : "btn btn-light m-2"
+                    }
+                    onClick={() => {
+                      getProject(project._id);
+                    }}
+                  >
+                    {project.projectType}
+                    {project.oneTimeId && (
+                      <small> (open for preferences)</small>
+                    )}
+                  </button>
+                );
+              })
+            )}
           </div>
-        );
-      })}
-      {project && (
-        <>
-          {project.oneTimeId && (
-            <>
-              <h4>{project.oneTimeId.uuId}</h4>
-              <p>{project.oneTimeId.expirationDate}</p>
-            </>
-          )}
-          {!project.preferencesOpen && (
-            <form
-              onSubmit={(e) => {
-                openPreferences(e);
-              }}
-            >
-              <input
-                type="datetime-local"
-                required
-                onChange={(e) => {
-                  setExpDate(e.target.value);
-                }}
-              />
-              <button className="btn btn-dark" type="submit">
-                Open student preferences
-              </button>
-            </form>
-          )}
-
-          {project.partecipants.map((student) => {
-            return <p key={student._id}>{student.studentName}</p>;
-          })}
-        </>
-      )}
-
-      {errorMessage && (
-        <p className="error-message text-uppercase">- {errorMessage} -</p>
+        </section>
+      ) : (
+        <section className="mb-2">
+          <button
+            className="btn btn-outline-info btn-sm me-2"
+            onClick={() => setToggle(!toggle)}
+          >
+            See all {cohort.projects.length} projects
+          </button>
+          <button
+            className="btn btn-primary btn-sm me-2"
+            onClick={() => setToggle(!toggle)}
+          >
+            Close students list
+          </button>
+          <Link to={`/lab-pairs/${cohort._id}`} style={{ textDecoration: "none" }}>
+            <button className="btn btn-outline-success btn-sm me-2">
+              Manage Pairs
+            </button>
+          </Link>
+          <button className="btn btn-outline-dark btn-sm me-2" onClick={() => {setProject(null); setStudent(null)}}>New Project</button>
+          <button
+            className="btn btn-outline-danger btn-sm me-2"
+            onClick={deleteCohort}
+          >
+            Delete Cohort
+          </button>
+          <div className="card p-3">
+            {cohort.students.map((student) => {
+              return (
+                <div key={student._id} onClick={() => {getStudent(student._id)}} className="d-flex justify-content-between btn btn-light btn-sm mb-1 text-capitalize">
+                    <span  >{student.studentName}</span>
+                      <span
+                        className="text-danger"
+                         >
+                        ❌
+                      </span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
       )}
     </>
   );
