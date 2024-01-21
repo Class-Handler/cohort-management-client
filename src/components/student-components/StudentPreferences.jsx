@@ -11,49 +11,87 @@ const StudentPreferences = ({
   blocked,
   updatePreferences,
   updateBlocked,
-  remove
+  remove,
+  openModal,
 }) => {
-
   const { studentData } = useContext(StudentContext);
-
-
-  // const [{ isOver, canDrop }, drop] = useDrop(() => ({
-  //   accept: "button",
-  //   drop: (item) => updatePreferences(item.id),
-  //   collect: (monitor) => ({
-  //     isOver: !!monitor.isOver(),
-  //     canDrop: !!monitor.canDrop(),
-  //   }),
-  // }));
 
   return (
     <>
-      <div className="row">
-        <div className="col col-6">
-          {partecipants.sort().map((student) => {
-            return <PartecipantBox student={student} key={student._id} type="notPickedYet"/>;
+      <div
+        className="row d-flex justify-content-evenly mb-5"
+        style={{ height: "10rem" }}
+      >
+        <div className="col col-5">
+          {partecipants.map((student) => {
+            return (
+              <PartecipantBox
+                student={student}
+                key={student._id}
+                type="notPickedYet"
+              />
+            );
           })}
         </div>
-        {/* <PreferenceBox
-            updateList={updatePartecipants}
-            preferences={partecipants}
-            type="chosen"
-          /> */}
 
-          <PreferenceBox
-            updateList={updatePreferences}
-            preferences={preferences}
-            type={ preferences.length < studentData.project.preferencesNumber ? "notPickedYet" : "no-more"}
-            addedTo="preferences"
-            remove={remove}
-          />
-          <PreferenceBox
-            updateList={updateBlocked}
-            preferences={blocked}
-            type={ (blocked.length < studentData.project.blockedNumber) ? "notPickedYet" : "no-more"}
-            addedTo="blocked"
-            remove={remove}
-          />
+        {/* INSTRUCTIONS AREA --> create component */}
+        <div className="col col-5">
+          <p>
+            Project: <b>{studentData.project.projectType}</b>
+          </p>
+
+          <p>
+            Number of choosen student you'd like to work with:{"  "}
+            <b>{preferences.length}</b>/
+            <b>{studentData.project.preferencesNumber}</b>{"  "}
+            {preferences.length === studentData.project.preferencesNumber && (
+              <b>✅ </b>
+            )}
+          </p>
+
+          <p>
+            Max number of student you can choose to NOT work with:{"  "}
+            <b>{blocked.length}</b>/
+            <b>{studentData.project.blockedNumber}</b>{"  "}
+            {blocked.length === studentData.project.blockedNumber && (
+              <b>✅ </b>
+            )}
+          </p>
+
+          {preferences.length === studentData.project.preferencesNumber && (
+            <button
+              className="btn btn-success"
+              onClick={openModal}
+            >
+              Submit
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="row d-flex justify-content-evenly">
+        <PreferenceBox
+          updateList={updatePreferences}
+          preferences={preferences}
+          type={
+            preferences.length < studentData.project.preferencesNumber
+              ? "notPickedYet"
+              : "no-more"
+          }
+          boxType="preferences"
+          remove={remove}
+        />
+        <PreferenceBox
+          updateList={updateBlocked}
+          preferences={blocked}
+          type={
+            blocked.length < studentData.project.blockedNumber
+              ? "notPickedYet"
+              : "no-more"
+          }
+          boxType="blocked"
+          remove={remove}
+        />
       </div>
     </>
   );
@@ -61,4 +99,4 @@ const StudentPreferences = ({
 
 export default StudentPreferences;
 
-// preferences.length = studentData.project.preferencesNumber && 
+// preferences.length = studentData.project.preferencesNumber &&

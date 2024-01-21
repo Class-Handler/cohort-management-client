@@ -4,6 +4,7 @@ import Signup from "../components/Signup";
 import { AuthContext } from "../context/auth.context";
 import { StudentContext } from "../context/student.context";
 import { Link } from "react-router-dom";
+import lostGif from "../assets/images/lost-gif.gif"
 
 const HomePage = () => {
   const [toggle, setToggle] = useState(false);
@@ -12,7 +13,7 @@ const HomePage = () => {
   const { isValidate, studentData } = useContext(StudentContext);
 
   return (
-    <div className="row">
+    <div className="row d-flex justify-content-center ">
       {!isLoggedIn && !isValidate && (
         <>
           <div className="col">
@@ -53,12 +54,14 @@ const HomePage = () => {
       )}
 
       {isValidate && (
-        <div className="col">
-        <p>Hey <span className="text-capitalize">{studentData.studentName}</span>, sounds you landed on the wrong page!</p>
-          <Link to={"/students-area"}>
-            <button className="btn btn-warning">Back to my project's preferences</button>
+        <>
+        <h3 className="text-align-center mb-5">Oooops, sounds you landed on the wrong page!</h3>
+        <div><img src={lostGif} alt="Are you lost?" width={"400px"}/>
+          <Link to={"/student-page"}>
+            <button className="btn btn-warning">Go back to submit your project's preferences</button>
           </Link>
-        </div>
+          </div>
+        </>
       )}
 
       {isLoggedIn && (
