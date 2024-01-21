@@ -39,14 +39,14 @@ function Navbar() {
       {isValidate && (
         <>
           <div>
-            <button className="btn btn-warning">
-              <span className="text-uppercase">
+            <h6>
+            Hello {" "}
+              <b className="text-capitalize">
                 {studentData.validateStudent.studentName}
-              </span>
-              's preferences
-            </button>
+              </b>
+              ! This session will expire in ....
+            </h6>
           </div>
-          <div>
             <NavLink to="/students-area">
               <button
                 className="btn btn-dark align-end"
@@ -55,7 +55,6 @@ function Navbar() {
                 Leave Preferences
               </button>
             </NavLink>
-          </div>
         </>
       )}
     </nav>
