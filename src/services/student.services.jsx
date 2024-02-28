@@ -18,8 +18,8 @@ class StudentService {
     });
   }
 
-  validateStudent = (code, studentName) => {
-    return this.api.get(`/api/students/validation?code=${code}&studentName=${studentName}`)
+  validateStudent = (body) => {
+    return this.api.post(`/api/students/validation`, body)
   }
 
   verifyStudent = () => {

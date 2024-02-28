@@ -7,99 +7,92 @@ import CohortDetails from "../components/cohort-components/CohortDetails";
 import ProjectDetails from "../components/project-components/ProjectDetails";
 import StudentDetails from "../components/student-components/StudentDetails";
 
-const CohortPage = () => {
+const CohortPage = ({showAlert}) => {
   const [cohort, setCohort] = useState(null);
   const [project, setProject] = useState(null);
-  const [student, setStudent] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(undefined);
+  const [student, setStudent] = useState(null);
 
   const { cohortId } = useParams();
-  const navigate = useNavigate()
+
+  const navigate = useNavigate();
 
   const getCohort = async () => {
     try {
       const response = await cohortService.getCohort(cohortId);
       setCohort(response.data);
-    } catch (err) {
-      setErrorMessage(err.response.data.message);
+    } catch (error) {
+      showAlert(`Oooops! ${error.response.data.message}`, "danger");
     }
   };
 
-  const getProject = (projectId) => {
-    projectService
-      .getProject(cohortId, projectId)
-      .then((response) => {
-        setStudent(null)
-        setProject(response.data);
-      })
-      .catch((err) => {
-        setErrorMessage(err.data.message);
-      });
+  const getProject = async (projectId) => {
+    try {
+      const response = await projectService.getProject(cohortId, projectId);
+      setStudent(null);
+      setProject(response.data);
+    } catch (error) {
+      showAlert(`Oooops! ${error.response.data.message}`, "danger");
+    }
   };
 
   const getStudent = async (studentId) => {
-   try {
-    const response = await cohortService.getStudent(cohortId, studentId)
-    setProject(null)
-    setStudent(response.data)
-  } catch (err) {
-    console.log(err)
-    setErrorMessage(err.data.message);
-  }
-  }
+    try {
+      const response = await cohortService.getStudent(cohortId, studentId);
+      setProject(null);
+      setStudent(response.data);
+    } catch (error) {
+      showAlert(`Oooops! ${error.response.data.message}`, "danger");
+    }
+  };
 
   const deleteCohort = async () => {
-    console.log('delete')
     try {
-      const response = await cohortService.deleteCohort(cohortId)
+      const response = await cohortService.deleteCohort(cohortId);
       console.log(response)
-      alert(response.data.message)
-      navigate('/my-cohorts')
-    } catch (err) {
-      console.log(err)
-      setErrorMessage(err.data.message);
+      showAlert(`${response.data.message}`, "success")
+      navigate("/my-cohorts");
+    } catch (error) {
+      showAlert(`Oooops! ${error.response.data.message}`, "danger");
     }
-  }
+  };
+
+  const createProject = async (e, project) => {
+    e.preventDefault();
+
+    try {
+      const response = await projectService.createProject(cohortId, project);
+      showAlert(`${response.data.projectType} successfully created`, "success");
+      getCohort();
+      getProject(response.data._id);
+    } catch (error) {
+      showAlert(`Oooops! ${error.response.data.message}`, "danger");
+    }
+  };
+
+  const handleNewProjectButton = () => {
+    setProject(null);
+    setStudent(null);
+  };
 
   useEffect(() => {
     getCohort();
   }, [cohortId]);
 
+  if (!cohort) {
+    return <h1>Loading...</h1>;
+  }
+
   return (
-    <div className="CohortPage">
-      {cohort && (
-        <div className="row">
-        <h4 className="text-uppercase"><u>{cohort.cohortName}</u></h4>
-
-          <div className="col col-7">
-            {errorMessage && (
-              <p className="error-message text-uppercase">- {errorMessage} -</p>
-            )}
-            <CohortDetails cohort={cohort} getProject={getProject} setProject={setProject} deleteCohort={deleteCohort} getStudent={getStudent} setStudent={setStudent}/>
-          </div>
-
-          <div className="col col-5">
-            {!project && !student &&(
-              <CreateProject
-                cohortId={cohort._id}
-                getCohort={getCohort}
-                getProject={getProject}
-                allStudents={cohort.students}
-              />
-)}
-              {project && <ProjectDetails
-                project={project}
-                cohortId={cohort._id}
-                getProject={getProject}
-              />}
-
-              {student && <StudentDetails student={student} />}
-            
-          </div>
-
-        </div>
-      )}
-    </div>
+      <CohortDetails
+        student={student}
+        project={project}
+        cohort={cohort}
+        getProject={getProject}
+        getStudent={getStudent}
+        deleteCohort={deleteCohort}
+        createProject={createProject}
+        handleNewProjectButton={handleNewProjectButton}
+      />
   );
 };
 

@@ -1,21 +1,18 @@
+import { Col, Row } from "react-bootstrap";
 import CohortCard from "./CohortCard";
 
-const CohortList = ({ cohorts, errorMessage }) => {
+const CohortList = ({ cohorts }) => {
   return (
-    <div className="CohortList">
-        { errorMessage && <p className="error-message text-uppercase">- {errorMessage} -</p> }
-
-      {!cohorts?.length && <p>CREATE cohort</p>}
-
-      {cohorts && (
-        <div>
-          {cohorts.map((cohortObj) => {
-            return <CohortCard cohortObj={cohortObj} key={cohortObj._id} />;
-          })}
-        </div>
-      )}
-    </div>
-  );
-};
+    <Row>
+      {cohorts.map((cohortObj) => {
+        return (
+          <Col md={6} key={cohortObj._id} >
+            <CohortCard cohortObj={cohortObj} />
+          </Col>
+        )
+      })}
+    </Row>
+  )
+}
 
 export default CohortList;

@@ -1,43 +1,55 @@
-
 import { useContext, useEffect, useState } from "react";
 import cohortService from "../services/cohort.services";
 import { AuthContext } from "../context/auth.context";
 import CohortList from "../components/cohort-components/CohortList";
 import CreateCohort from "../components/cohort-components/CreateCohort";
+import { Col, Row } from "react-bootstrap";
 
-const CohortsPage = () => {
-    const [cohorts, setCohorts] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(undefined);
+const CohortsPage = ({showAlert}) => {
+  const [cohorts, setCohorts] = useState(null);
 
-    const { isLoading } = useContext(AuthContext)
-  
-    const getCohorts = () => {
-      cohortService.getCohorts()
-      .then((responce) => {
-        setCohorts(responce.data);
-      })
-        .catch((error) => {
-          setErrorMessage(error.response.data.message);
-        });
-    };
+  const { isLoading } = useContext(AuthContext);
 
-    useEffect(() => {
-        getCohorts();
-    }, []);
-
-    if(isLoading){
-      return  <p>Loading...</p>
+  const getCohorts = async () => {
+    try {
+      const response = await cohortService.getCohorts()
+      setCohorts(response.data);
+    } catch (error) {
+      showAlert(`Oooops! ${error.response.data.message}`, "danger")
     }
+  };
+
+  useEffect(() => {
+    getCohorts();
+  }, []);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
 
   return (
-    <div className="CohortsPage row">
-      <div className="col">
-        <CohortList cohorts={cohorts} errorMessage={errorMessage} />
-      </div>
-      <div className="col">
-        <CreateCohort getCohorts={getCohorts} />
-      </div>
-    </div>
+      <Row>
+        <Col md={6}>
+          <div
+            className="overflow-y-scroll shadow p-3 bg-body rounded"
+            style={{ height: "80vh" }}
+          >
+            <CreateCohort showAlert={showAlert} getCohorts={getCohorts}/>
+          </div>
+        </Col>
+        <Col md={{ span: 6, order: "first" }}>
+          {!cohorts?.length ? (
+            <h4>Create your first cohort</h4>
+          ) : (
+            <div
+              className="overflow-y-scroll shadow p-3 bg-body rounded"
+              style={{ height: "80vh" }}
+            >
+              <CohortList cohorts={cohorts} />
+            </div>
+          )}
+        </Col>
+      </Row>
   );
 };
 

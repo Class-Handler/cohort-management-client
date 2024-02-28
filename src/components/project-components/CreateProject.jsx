@@ -1,12 +1,11 @@
 import { useState } from "react";
-import projectService from "../../services/project.services";
 
-const CreateProject = ({ cohortId, getCohort, getProject, allStudents }) => {
+const CreateProject = ({ cohortId, createProject, allStudents }) => {
   const [project, setProject] = useState({
     projectType: null,
     preferencesNumber: 8,
     blockedNumber: 3,
-    partecipants: allStudents.map(el => el._id),
+    partecipants: allStudents.map((el) => el._id),
     cohortId: cohortId,
   });
   const [togglePartecipants, setTogglePartecipants] = useState(false);
@@ -20,30 +19,28 @@ const CreateProject = ({ cohortId, getCohort, getProject, allStudents }) => {
 
   const handlePartecipants = (e) => {
     if (e.target.checked) {
-      const selectedPartecipantsList = [...project.partecipants, e.target.value];
-      setProject((prev) => ({...prev, partecipants: selectedPartecipantsList}));
+      const selectedPartecipantsList = [
+        ...project.partecipants,
+        e.target.value,
+      ];
+      setProject((prev) => ({
+        ...prev,
+        partecipants: selectedPartecipantsList,
+      }));
     } else {
-      const selectedPartecipantsList = project.partecipants.filter((el) => el !== e.target.value);
-      setProject((prev) => ({...prev, partecipants: selectedPartecipantsList}));
-    }
-  };
-
-  const createProject = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await projectService.createProject(cohortId, project);
-      alert("Project created"); // needs to be changed
-      getCohort();
-      getProject(response.data._id)
-    } catch (err) {
-      setErrorMessage(err.response.data.message);
+      const selectedPartecipantsList = project.partecipants.filter(
+        (el) => el !== e.target.value
+      );
+      setProject((prev) => ({
+        ...prev,
+        partecipants: selectedPartecipantsList,
+      }));
     }
   };
 
   return (
-    <div className="CreateProject card p-2">
-      <form onSubmit={createProject} className="form">
+    <>
+      <form onSubmit={(e) => createProject(e, project)} className="form">
         <div className="d-flex justify-content-evenly mb-3 ">
           <div className="form-check m-1">
             <label className="form-check-label m-1">
@@ -105,33 +102,34 @@ const CreateProject = ({ cohortId, getCohort, getProject, allStudents }) => {
         </div>
 
         <div className="mb-3 d-flex justify-content-center">
-          <label className="form-label">Number of preferences (5-9):
-          <input
-            type="number"
-            name="preferencesNumber"
-            value={project.preferencesNumber}
-            onChange={handleChange}
-            className="form-control"
-            min={5}
-            max={9}
-            required
-          />
+          <label className="form-label">
+            Number of preferences (5-9):
+            <input
+              type="number"
+              name="preferencesNumber"
+              value={project.preferencesNumber}
+              onChange={handleChange}
+              className="form-control"
+              min={5}
+              max={9}
+              required
+            />
           </label>
         </div>
 
         <div className="mb-3 d-flex justify-content-center">
           <label className="form-label">
             Number of Not preferences (max 4):
-          <input
-            type="number"
-            name="blockedNumber"
-            value={project.blockedNumber}
-            onChange={handleChange}
-            className="form-control"
-            min={0}
-            max={4}
-            required
-          />
+            <input
+              type="number"
+              name="blockedNumber"
+              value={project.blockedNumber}
+              onChange={handleChange}
+              className="form-control"
+              min={0}
+              max={4}
+              required
+            />
           </label>
         </div>
 
@@ -213,7 +211,7 @@ const CreateProject = ({ cohortId, getCohort, getProject, allStudents }) => {
           </button>
         </div>
       </form>
-    </div>
+    </>
   );
 };
 

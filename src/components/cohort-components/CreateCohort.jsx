@@ -1,14 +1,17 @@
 import { useState } from "react";
 import cohortService from "../../services/cohort.services";
+import { Button, FloatingLabel, Form, InputGroup } from "react-bootstrap";
+const defaultValue = {
+  teacherName: "",
+  cohortName: "",
+  studentsNames: "",
+  projectSetting: null,
+  emailsAccessTo: [],
+};
 
-const CreateCohort = ({ getCohorts }) => {
-  const [cohort, setCohort] = useState({
-    teacherName: "",
-    cohortName: "",
-    studentsNames: "",
-    projectSetting: null,
-  });
-  const [errorMessage, setErrorMessage] = useState(undefined);
+const CreateCohort = ({ showAlert, getCohorts }) => {
+  const [cohort, setCohort] = useState(defaultValue);
+  const [email, setEmail] = useState("");
 
   const handleChange = (e) => {
     const name = e.target.name;
@@ -16,86 +19,127 @@ const CreateCohort = ({ getCohorts }) => {
     setCohort((values) => ({ ...values, [name]: value }));
   };
 
-  const createCohort = (e) => {
+  const addAccessEmail = (e) => {
     e.preventDefault();
+    if (email) {
+      const emails = [...cohort.emailsAccessTo, email];
+      setCohort((prev) => ({ ...prev, emailsAccessTo: emails }));
+      setEmail("");
+    }
+  };
+
+  const removeAccessEmail = (e, email) => {
+    e.preventDefault();
+    const emails = cohort.emailsAccessTo.filter((el) => {
+      return el !== email;
+    });
+    setCohort((prev) => ({ ...prev, emailsAccessTo: emails }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (email) {
+      showAlert(
+        `You might give access to ${email} before create a new cohort`,
+        "warning"
+      );
+      return;
+    }
+    createCohort();
+  };
+
+  const createCohort = () => {
     cohortService
       .createCohort(cohort)
       .then((response) => {
-        console.log("New Cohort! ", response.data);
+        showAlert(
+          `${response.data.cohortName} successfully created`,
+          "success"
+        );
+        setCohort(defaultValue);
         getCohorts();
-        setCohort({
-          teacherName: "",
-          cohortName: "",
-          studentsNames: "",
-          projectSetting: null,
-        });
       })
       .catch((error) => {
-        setErrorMessage(error.response.data.message);
+        console.log(error);
+        showAlert(`Oooops! ${error.response.data}`, "danger");
       });
   };
 
-  const openProjectForm = (e) => {
-    e.preventDefault();
-  };
-
   return (
-    <form onSubmit={createCohort} className="card p-4">
-      <div className="mb-3">
-        <label className="form-label">Teacher Name:</label>
-        <input
-          type="text"
-          name="teacherName"
-          value={cohort.teacherName}
-          onChange={handleChange}
-          className="form-control"
-          required
-        />
-      </div>
-      <div className="mb-3">
-        <label className="form-label">Cohort Name:</label>
-        <input
-          type="text"
-          name="cohortName"
-          value={cohort.cohortName}
-          onChange={handleChange}
-          className="form-control"
-          placeholder="WD-REM-OCT-23"
-          required
-        />
-      </div>
-      <div className="mb-3">
-        <label className="form-label">
-          Students: <em>( enter names separated by a line-break )</em>
-        </label>
-        <textarea
-          className="form-control"
-          rows="5"
-          cols="33"
-          name="studentsNames"
-          value={cohort.studentsNames}
-          onChange={handleChange}
-          required
-        ></textarea>
-      </div>
-      <div className="mb-3">
-        <label>
-          Next Project preferences settings:
-          {/* // projectSettings {} for req.body --> {projectType, preferencesNumber, blockedNumber} */}
-          <button className="btn btn-light" onClick={openProjectForm}>
-            Open Project form
-          </button>
-        </label>
-      </div>
+    <Form onSubmit={handleSubmit}>
+      <InputGroup className="mb-3">
+        <FloatingLabel label="Teacher Name">
+          <Form.Control
+            type="text"
+            placeholder="Teacher Name"
+            name="teacherName"
+            value={cohort.teacherName}
+            onChange={handleChange}
+            required
+          />
+        </FloatingLabel>
+      </InputGroup>
 
-      {errorMessage && (
-        <p className="error-message text-uppercase">- {errorMessage} -</p>
-      )}
+      <InputGroup className="mb-3">
+        <FloatingLabel label="Cohort Name (ex: WD-REM-OCT-23)">
+          <Form.Control
+            type="text"
+            placeholder="ex: WD-REM-OCT-23"
+            name="cohortName"
+            value={cohort.cohortName}
+            onChange={handleChange}
+            required
+          />
+        </FloatingLabel>
+      </InputGroup>
 
-      <button type="submit" className="btn btn-dark">
+      <InputGroup className="mb-3">
+        <FloatingLabel label="Students: ( enter names separated by a line-break )">
+          <Form.Control
+            as="textarea"
+            placeholder="Students: ( enter names separated by a line-break )"
+            style={{ height: "200px" }}
+            name="studentsNames"
+            value={cohort.studentsNames}
+            onChange={handleChange}
+            required
+          />
+        </FloatingLabel>
+      </InputGroup>
+
+      <Form.Label>Give access to:</Form.Label>
+      <InputGroup className="mb-3">
+        <Form.Control
+          aria-describedby="basic-addon3"
+          type="email"
+          value={email}
+          placeholder="myColleague@work.com"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Button variant="outline-secondary" onClick={(e) => addAccessEmail(e)}>
+          ➕
+        </Button>
+      </InputGroup>
+
+      {cohort.emailsAccessTo.map((email, i) => {
+        return (
+          <p key={i} className="d-flex justify-content-between border rounded">
+            <span className="m-2">{email}</span>
+            <Button
+              variant="outline-danger"
+              size="md"
+              onClick={(e) => removeAccessEmail(e, email)}
+            >
+              ➖
+            </Button>
+          </p>
+        );
+      })}
+
+      <Button type="submit" variant="dark">
         Submit
-      </button>
-    </form>
+      </Button>
+    </Form>
   );
 };
 

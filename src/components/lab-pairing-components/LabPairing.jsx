@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import cohortService from "../services/cohort.services";
+import cohortService from "../../services/cohort.services";
 import { Button, Modal, Table } from "react-bootstrap";
 
 
-const LabPairingPage = () => {
+const LabPairing = () => {
     const [students, setStudents] = useState(null);
     const [temporaryPairs, setTemporaryPairs] = useState(null)
     const [temporaryNewStudentsObj, setTemporaryNewStudentsObj] = useState(null)
@@ -37,7 +37,7 @@ const LabPairingPage = () => {
             return <td key={`${studentObj._id}/${pairId}`} className="bg-dark"></td>
         }
         if(studentObj.pairedWith.includes(pairId)){
-            return <td key={`${studentObj._id}/${pairId}`} className="bg-primary"></td>
+            return <td key={`${studentObj._id}/${pairId}`} className="bg-success"></td>
         } else {
             return <td key={`${studentObj._id}/${pairId}`}></td>
         }
@@ -75,12 +75,15 @@ const LabPairingPage = () => {
             !picked.includes(el)
           );
         });
+
         if(!filteredPicking.length){
             console.log("NO more to pick from");
             return
         }
+
         // pick a random from filtered
         const willPairWithObj = getRandomStudent(filteredPicking);
+
         // save match into pairWith array for both students of the 'pair'
         studentObj.pairedWith.push(willPairWithObj._id);
         willPairWithObj.pairedWith.push(studentObj._id);
@@ -94,7 +97,7 @@ const LabPairingPage = () => {
 
     const generateRandomPairs = () => {
         const copy = JSON.parse(JSON.stringify(students));
-        const shuffleStudents = copy.sort((a, b) => 0.5 - Math. random())
+        const shuffleStudents = [...copy.sort(() => 0.5 - Math. random())]
         let oddStudent 
         let combination = { pairs: [] }
 
@@ -104,7 +107,6 @@ const LabPairingPage = () => {
         }
 
         const minusOdd = shuffleStudents.filter(el => el.studentName !== oddStudent)
-        console.log("minusOdd", minusOdd)
 
         do {
             combination = findPairsCombination(minusOdd)
@@ -114,16 +116,18 @@ const LabPairingPage = () => {
           console.log("picked", combination.picked)
 
           if(oddStudent){
+            console.log('got odd')
             setTemporaryPairs([...combination.pairs, oddStudent])
-            prepareTextToCopy([...combination.pairs, oddStudent])
+            prepareTextToCopy([...combination.pairs, capitalizeString(oddStudent)])
         } else {
             setTemporaryPairs(combination.pairs)
             prepareTextToCopy(combination.pairs)
         }
           setTemporaryNewStudentsObj(combination.picked)
           openModal()
-
     }
+
+
 
     const submitPairs = async () => {
         try {
@@ -147,10 +151,9 @@ const LabPairingPage = () => {
 
     return (
       <>
-        <button onClick={generateRandomPairs} className="btn btn-warning m-2">
+        <Button onClick={generateRandomPairs} className="mb-2" variant="success">
           Get pairs
-        </button>
-        <Link to={`/${cohortId}`}><button className="btn btn-secondary m-2">Go Back</button></Link>
+        </Button>
 
         {errorMessage && ( <p className="error-message text-uppercase">- {errorMessage} -</p> )}
 
@@ -201,13 +204,14 @@ const LabPairingPage = () => {
           </Modal>
         )}
 
-        <Table responsive bordered hover style={{maxWidth: "100%"}}>
+        <Table responsive bordered hover >
           <thead>
             <tr>
               <th></th>
               {students.map((student) => (
                 <th key={student._id} className="bg-light">
-                  <p style={{ transform: "rotate(-90deg)" }} className="text-capitalize">
+                  <p className="text-capitalize "> 
+                    {/* style={{ transform: "rotate(-90deg)" }}  */}
                     {student.studentName}
                   </p>
                 </th>
@@ -216,8 +220,8 @@ const LabPairingPage = () => {
           </thead>
           <tbody>
             {students.map((student) => (
-              <tr key={student._id}>
-                <td className="bg-light">
+              <tr key={student._id} className="">
+                <td className="bg-light position-fixed-start">
                   <b className="text-capitalize">{student.studentName}</b>
                 </td>
                 {students.map((pair) => checkIfPaired(student, pair._id))}
@@ -229,4 +233,4 @@ const LabPairingPage = () => {
     );
 }
 
-export default LabPairingPage
+export default LabPairing

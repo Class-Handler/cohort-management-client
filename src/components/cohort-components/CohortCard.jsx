@@ -1,23 +1,20 @@
+import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 const CohortCard = ({ cohortObj }) => {
   return (
-    <div className="CohortCard card mb-3" >
-      <div className="card-body text-center">
-        <Link to={`/${cohortObj._id}`} className="card-title text-capitalize">
-          <h3>{cohortObj.cohortName}</h3>
-        </Link>
-        <h6 className="card-subtitle mb-2 text-body-secondary">
-          Teacher: {cohortObj.teacherName}
-        </h6>
-        <p className="card-text">
-          Number of students: {cohortObj?.students.length}
-        </p>
-        <p className="card-text">
-          Projects created: {cohortObj?.projects.length}
-        </p>
-      </div>
-    </div>
+    <Card className="mb-3 shadow-sm">
+      <Link to={`/${cohortObj._id}`} style={{ textDecoration: "none", color: "black" }}>
+        <Card.Header as="h5" className="text-capitalize text-center">
+          {cohortObj.cohortName}
+        </Card.Header>
+      </Link>
+      <Card.Body>
+        <Card.Text>Teacher: {cohortObj.teacherName}</Card.Text>
+        <Card.Text>Number of students: {cohortObj.students.length}</Card.Text>
+        <Card.Text>Projects created: {cohortObj.projects.length}</Card.Text>
+      </Card.Body>
+    </Card>
   );
 };
 

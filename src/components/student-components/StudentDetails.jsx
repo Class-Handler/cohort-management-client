@@ -1,5 +1,9 @@
+import { Link, useParams } from "react-router-dom";
+
 const StudentDetails = ({ student }) => {
-  console.log(student);
+  
+  const { cohortId } = useParams()
+
   return (
     <div>
       <h4 className="text-capitalize">{student.studentName}</h4>
@@ -15,9 +19,13 @@ const StudentDetails = ({ student }) => {
       )}
 
       {student.projectsPreferences.length ? (
-        <p>Project preferences submitted:</p>
+        <p>Project preferences submitted: 
+        {student.projectsPreferences.map((preference) => {
+          return <Link to={`/preferences/${cohortId}/${preference.projectId._id}`} key={preference._id}><span className="btn btn-outline-primary btn-sm ms-2"> {preference.projectId.projectType} </span></Link>
+        })}
+        </p>
       ) : (
-        <p>Haven't participated to any project yet</p>
+        <p>Haven't submitted any project preference yet</p>
       )}
     </div>
   );

@@ -1,35 +1,48 @@
 import { useDrop } from "react-dnd";
 import PartecipantBox from "./PartecipantBox";
-import { StudentContext } from "../../context/student.context";
-import { useContext } from "react";
+import { ListGroup } from "react-bootstrap";
 
 const PreferenceBox = ({ updateList, preferences, type, remove, boxType }) => {
-  const { studentData } = useContext(StudentContext);
-
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
-    accept: type,
-    drop: (item) => updateList(item.id),
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
-      canDrop: !!monitor.canDrop(),
+  const [{ canDrop }, drop] = useDrop(
+    () => ({
+      accept: type,
+      drop: (item) => updateList(item.id),
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+        canDrop: !!monitor.canDrop(),
+      }),
     }),
-  }), [type, preferences]);
+    [type, preferences]
+  );
 
   return (
     <div
-      className={boxType === "preferences" ? "col col-5 border border-success shadow p-3 mb-5 bg-body rounded" : "col col-5 border border-danger shadow p-3 mb-5 bg-body rounded" }
+      className={`border shadow p-3 rounded overflow-y-scroll ${
+        boxType === "preferences"
+          ? "border-success bg-success-subtle"
+          : "border-danger bg-danger-subtle"
+      }`}
       ref={drop}
-      style={{height: '20rem', background: canDrop && "mintcream"}} 
+      style={{ height: "50vh" }}
     >
-      <ol ref={drop} className={boxType === "blocked" ? "list-unstyled" : undefined}>
+      <ListGroup as="ol" numbered ref={drop}>
         {preferences.map((student) => {
           return (
-            <li key={student._id}>
-              <PartecipantBox student={student} type="chosen" addedTo={preferences} remove={remove}/>
-            </li>
+            <ListGroup.Item
+              key={student._id}
+              as="li"
+              className="d-flex align-items-center p-1 mb-1 rounded"
+            >
+              <PartecipantBox
+                student={student}
+                type="chosen"
+                addedTo={preferences}
+                remove={remove}
+              />
+            </ListGroup.Item>
           );
         })}
-      </ol>
+      </ListGroup>
     </div>
   );
 };

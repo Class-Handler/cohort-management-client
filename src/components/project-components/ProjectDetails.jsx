@@ -1,11 +1,11 @@
 import { useState } from "react";
 import projectService from "../../services/project.services";
+import { Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
-const ProjectDetails = ({ project, getProject, cohortId }) => {
+const ProjectDetails = ({ project, getProject, cohortId, handleNewProjectButton }) => {
   const [expDate, setExpDate] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-
-  console.log('project', project)
 
   const openPreferences = async (e) => {
     e.preventDefault();
@@ -31,11 +31,25 @@ const ProjectDetails = ({ project, getProject, cohortId }) => {
     }
   };
 
+  const didSubmit = (student) => {
+   if(project.partecipantsPreference.find(el => el._id === student._id) ){
+    return <span>🔹</span>
+   }
+  }
+
   return (
     <>
       {project && (
         <>
           <h5>{project.projectType}</h5>
+          <Button
+              variant="outline-dark"
+              size="sm"
+              className="me-3"
+              onClick={handleNewProjectButton}
+            >
+              New Project
+            </Button>
           <div className="row form-control mb-2">
             <label className="col col-6">
               Preferences to submit:
@@ -69,7 +83,7 @@ const ProjectDetails = ({ project, getProject, cohortId }) => {
                   className="d-flex justify-content-between btn btn-light btn-sm mb-1 text-capitalize"
                 >
                   <span>{student.studentName} </span>
-                  {project.partecipantsPreference.includes(student._id) && <span>🔹</span>}
+                  {didSubmit(student)}
                   {isEditing && (
                     <span
                       className="text-danger"
@@ -97,14 +111,17 @@ const ProjectDetails = ({ project, getProject, cohortId }) => {
                 <p>
                   Expire:{" "}
                   <small>
-                    {new Date(project.oneTimeId.expirationDate).toLocaleString("en-GB")}
+                    {new Date(project.oneTimeId.expirationDate).toLocaleString('en-US')}
                   </small>
                 </p>
-                {project.partecipantsPreference.leght ? (
+                {project.partecipantsPreference.length ? (
+                  <>
                   <p>
-                    Preferences received: {project.partecipantsPreference.leght}{" "}
-                    / {project.partecipants.leght}
+                    Preferences received 🔹: {project.partecipantsPreference.length}{" "}
+                    / {project.partecipants.length} 
                   </p>
+                  {!isEditing && <Link to={`/preferences/${cohortId}/${project._id}`}><button className="btn btn-outline-success btn-sm ms-2">Check Preference</button></Link>}
+                  </>
                 ) : (
                   <p>No preferences received yet.</p>
                 )}
